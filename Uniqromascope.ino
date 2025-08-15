@@ -1,6 +1,13 @@
+#include <Adafruit_NeoPixel.h>
+// #include <rp2040_pio.h>
+
 volatile int counter = 0;
 volatile bool takeSample = false;
 volatile unsigned long data = 0UL;
+
+#define NEOPIXELPIN 6
+#define NUMPIXELS 1
+Adafruit_NeoPixel pixels(NUMPIXELS, NEOPIXELPIN, NEO_GRB + NEO_KHZ800);
 
 void setup()
 {
@@ -9,6 +16,8 @@ void setup()
 	pinMode(2, INPUT);
 	pinMode(4, INPUT);
 	attachInterrupt(digitalPinToInterrupt(2), interruptHandler, RISING);
+	pixels.begin();
+	Serial.println("Ready 0004");
 }
 
 void loop()
@@ -25,7 +34,7 @@ void loop()
 		data = data << 1;
 		data |= bit;
 
-		Serial.print("foo 0003 ... ");
+		Serial.print("foo ... ");
 		Serial.print("counter:");
 		Serial.print(counter);
 
@@ -41,6 +50,10 @@ void loop()
 		Serial.print(r);
 
 		Serial.println();
+
+		pixels.clear();
+		pixels.setPixelColor(0, pixels.Color(r, g, b));
+		pixels.show();
 
 		takeSample = false;
 	}
