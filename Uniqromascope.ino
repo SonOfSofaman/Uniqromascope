@@ -1,5 +1,4 @@
 #include <Adafruit_NeoPixel.h>
-// #include <rp2040_pio.h>
 
 volatile int counter = 0;
 volatile bool takeSample = false;
@@ -11,22 +10,16 @@ Adafruit_NeoPixel pixels(NUMPIXELS, NEOPIXELPIN, NEO_GRB + NEO_KHZ800);
 
 void setup()
 {
-	Serial.begin(115200);
-	pinMode(LED_BUILTIN, OUTPUT);
+	// Serial.begin(115200);
+	// pinMode(LED_BUILTIN, OUTPUT);
 	pinMode(2, INPUT);
 	pinMode(4, INPUT);
 	attachInterrupt(digitalPinToInterrupt(2), interruptHandler, RISING);
 	pixels.begin();
-	Serial.println("Ready 0004");
 }
 
 void loop()
 {
-	// digitalWrite(LED_BUILTIN, HIGH);
-	// delay(5000);
-	// digitalWrite(LED_BUILTIN, LOW);
-	// delay(100);
-
 	if (takeSample)
 	{
 		bool bit = digitalRead(4);
@@ -34,22 +27,9 @@ void loop()
 		data = data << 1;
 		data |= bit;
 
-		Serial.print("foo ... ");
-		Serial.print("counter:");
-		Serial.print(counter);
-
 		byte r = (data & 0x000000FFUL) >> 0;
 		byte g = (data & 0x0000FF00UL) >> 8;
 		byte b = (data & 0x00FF0000UL) >> 16;
-
-		Serial.print(" b,g,r:");
-		Serial.print(b);
-		Serial.print(",");
-		Serial.print(g);
-		Serial.print(",");
-		Serial.print(r);
-
-		Serial.println();
 
 		pixels.clear();
 		pixels.setPixelColor(0, pixels.Color(r, g, b));
